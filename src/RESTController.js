@@ -13,6 +13,7 @@ import CoreManager from './CoreManager';
 import ParseError from './ParseError';
 import ParsePromise from './ParsePromise';
 import Storage from './Storage';
+import Polyfill from 'weapp-polyfill';
 
 export type RequestOptions = {
   useMasterKey?: boolean;
@@ -29,16 +30,18 @@ export type FullOptions = {
 };
 
 var XHR = null;
-if (typeof XMLHttpRequest !== 'undefined') {
-  XHR = XMLHttpRequest;
+
+if (typeof Polyfill.XMLHttpRequest !== 'undefined') {
+    XHR = Polyfill.XMLHttpRequest;
 }
+
 if (process.env.PARSE_BUILD === 'node') {
   XHR = require('xmlhttprequest').XMLHttpRequest;
 }
 
 var useXDomainRequest = false;
 if (typeof XDomainRequest !== 'undefined' &&
-    !('withCredentials' in new XMLHttpRequest())) {
+    !('withCredentials' in new Polyfill.XMLHttpRequest())) {
   useXDomainRequest = true;
 }
 
